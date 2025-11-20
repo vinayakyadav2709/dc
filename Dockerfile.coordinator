@@ -1,0 +1,16 @@
+# Dockerfile for Coordinator
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN pip install uv
+
+COPY pyproject.toml .
+COPY src/ ./src/
+
+RUN uv sync
+
+# Force unbuffered output for real-time logs
+ENV PYTHONUNBUFFERED=1
+
+CMD ["uv", "run", "python", "-u", "src/coordinator.py"]

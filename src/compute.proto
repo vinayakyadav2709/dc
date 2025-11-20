@@ -1,0 +1,134 @@
+syntax = "proto3";
+
+// Coordinator service (lightweight directory)
+service Coordinator {
+    rpc RegisterNode(NodeRegistration) returns (RegisterResponse);
+    rpc GetAvailableNodes(NodeRequest) returns (NodeListResponse);
+    rpc UpdateNodeStatus(NodeStatus) returns (StatusResponse);
+    rpc RegisterTaskReplica(TaskReplicaRequest) returns (TaskReplicaResponse);
+    rpc GetBackupForTask(TaskBackupRequest) returns (TaskBackupResponse);
+    rpc PromoteBackupToPrimary(PromotionRequest) returns (PromotionResponse);
+}
+
+// Node service (P2P with availability checking)
+service Node {
+    rpc ComputeTask(TaskRequest) returns (TaskResult);
+    rpc Ping(PingRequest) returns (PingResponse);
+    rpc CheckAvailability(AvailabilityRequest) returns (AvailabilityResponse);
+    rpc ReserveForTask(ReservationRequest) returns (ReservationResponse);
+}
+
+message NodeRegistration {
+    string node_id = 1;
+    string ip = 2;
+    int32 port = 3;
+    int32 cpu_cores = 4;
+    int32 memory_gb = 5;
+}
+
+message RegisterResponse {
+    string status = 1;
+    string message = 2;
+}
+
+message NodeRequest {
+    int32 num_nodes = 1;
+    string requesting_node_id = 2;
+}
+
+message NodeListResponse {
+    repeated NodeInfo nodes = 1;
+}
+
+message NodeInfo {
+    string node_id = 1;
+    string address = 2;
+    int32 cpu_cores = 3;
+    int32 memory_gb = 4;
+    string status = 5;
+}
+
+message NodeStatus {
+    string node_id = 1;
+    string status = 2;
+}
+
+message StatusResponse {
+    string status = 1;
+}
+
+message TaskRequest {
+    string task_id = 1;
+    bytes a_block = 2;
+    bytes b_matrix = 3;
+    repeated int32 a_shape = 4;
+    repeated int32 b_shape = 5;
+}
+
+message TaskResult {
+    string task_id = 1;
+    bytes result = 2;
+    string status = 3;
+}
+
+message PingRequest {
+    string message = 1;
+}
+
+message PingResponse {
+    string message = 1;
+}
+
+message AvailabilityRequest {
+    string requester_id = 1;
+}
+
+message AvailabilityResponse {
+    bool available = 1;
+    string status = 2;
+    int32 current_load = 3;
+}
+
+message ReservationRequest {
+    string requester_id = 1;
+    string task_id = 2;
+}
+
+message ReservationResponse {
+    bool reserved = 1;
+    string message = 2;
+}
+
+// Fault Tolerance: Primary-Backup Replication
+message TaskReplicaRequest {
+    string task_id = 1;
+    string primary_node_id = 2;
+    string backup_node_id = 3;
+    bytes task_data = 4;
+}
+
+message TaskReplicaResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+message TaskBackupRequest {
+    string task_id = 1;
+}
+
+message TaskBackupResponse {
+    string backup_node_id = 1;
+    bytes task_data = 2;
+    bool has_backup = 3;
+}
+
+message PromotionRequest {
+    string task_id = 1;
+    string failed_primary = 2;
+}
+
+message PromotionResponse {
+    bool success = 1;
+    string promoted_backup = 2;
+    string message = 3;
+}

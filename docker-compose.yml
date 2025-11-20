@@ -1,0 +1,170 @@
+version: '3.8'
+
+services:
+  coordinator:
+    build:
+      context: .
+      dockerfile: Dockerfile.coordinator
+    networks:
+      - dc_network
+    ports:
+      - "50051:50051"
+    volumes:
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: sh -c "mkdir -p /app/logs && uv run python -u src/coordinator.py 2>&1 | tee /app/logs/coordinator.log"
+
+  worker1:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    command: sh -c "mkdir -p /app/logs && uv run python -u start_node.py worker1 50061 0.01 2>&1 | tee /app/logs/worker1.log"
+    networks:
+      - dc_network
+    ports:
+      - "50061:50061"
+    volumes:
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - COORDINATOR_ADDRESS=coordinator:50051
+
+  worker2:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    command: sh -c "mkdir -p /app/logs && uv run python -u start_node.py worker2 50062 0.02 2>&1 | tee /app/logs/worker2.log"
+    networks:
+      - dc_network
+    ports:
+      - "50062:50062"
+    volumes:
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - COORDINATOR_ADDRESS=coordinator:50051
+
+  worker3:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    command: sh -c "mkdir -p /app/logs && uv run python -u start_node.py worker3 50063 0.03 2>&1 | tee /app/logs/worker3.log"
+    networks:
+      - dc_network
+    ports:
+      - "50063:50063"
+    volumes:
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - COORDINATOR_ADDRESS=coordinator:50051
+
+  worker4:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    command: sh -c "mkdir -p /app/logs && uv run python -u start_node.py worker4 50064 0.04 2>&1 | tee /app/logs/worker4.log"
+    networks:
+      - dc_network
+    ports:
+      - "50064:50064"
+    volumes:
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - COORDINATOR_ADDRESS=coordinator:50051
+
+  worker5:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    command: sh -c "mkdir -p /app/logs && uv run python -u start_node.py worker5 50065 0.05 2>&1 | tee /app/logs/worker5.log"
+    networks:
+      - dc_network
+    ports:
+      - "50065:50065"
+    volumes:
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - COORDINATOR_ADDRESS=coordinator:50051
+
+  worker6:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    command: sh -c "mkdir -p /app/logs && uv run python -u start_node.py worker6 50066 0.06 2>&1 | tee /app/logs/worker6.log"
+    networks:
+      - dc_network
+    ports:
+      - "50066:50066"
+    volumes:
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - COORDINATOR_ADDRESS=coordinator:50051
+
+  worker7:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    command: sh -c "mkdir -p /app/logs && uv run python -u start_node.py worker7 50067 0.07 2>&1 | tee /app/logs/worker7.log"
+    networks:
+      - dc_network
+    ports:
+      - "50067:50067"
+    volumes:
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - COORDINATOR_ADDRESS=coordinator:50051
+
+  worker8:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    command: sh -c "mkdir -p /app/logs && uv run python -u start_node.py worker8 50068 0.08 2>&1 | tee /app/logs/worker8.log"
+    networks:
+      - dc_network
+    ports:
+      - "50068:50068"
+    volumes:
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - COORDINATOR_ADDRESS=coordinator:50051
+
+  worker9:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    command: sh -c "mkdir -p /app/logs && uv run python -u start_node.py worker9 50069 0.09 2>&1 | tee /app/logs/worker9.log"
+    networks:
+      - dc_network
+    ports:
+      - "50069:50069"
+    volumes:
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - COORDINATOR_ADDRESS=coordinator:50051
+
+  worker10:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    command: sh -c "mkdir -p /app/logs && uv run python -u start_node.py worker10 50070 0.10 2>&1 | tee /app/logs/worker10.log"
+    networks:
+      - dc_network
+    ports:
+      - "50070:50070"
+    volumes:
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - COORDINATOR_ADDRESS=coordinator:50051
+
+networks:
+  dc_network:
+    driver: bridge

@@ -1,0 +1,28 @@
+# Dockerfile for Nodes
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install uv
+RUN pip install uv
+
+# Copy dependency files
+COPY pyproject.toml .
+
+# Sync dependencies (cached layer)
+RUN uv sync --no-install-project
+
+# Copy source code
+COPY src/ ./src/
+COPY start_node.py .
+
+# Create entrypoint script
+RUN echo '#!/bin/bash' > /app/start_node.sh && \
+    echo 'node_id=$1' >> /app/start_node.sh && \
+    echo 'port=$2' >> /app/start_node.sh && \
+    echo 'latency=$3' >> /app/start_node.sh && \
+    echo 'echo "Starting node $node_id on port $port with latency $latency"' >> /app/start_node.sh && \
+    echo 'exec uv run python start_node.py "$node_id" "$port" "$latency"' >> /app/start_node.sh && \
+    chmod +x /app/start_node.sh
+
+CMD ["/app/start_node.sh", "worker1", "50061", "0.01"]
